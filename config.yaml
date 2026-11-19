@@ -1,0 +1,51 @@
+﻿# config.yaml - single source of truth for settings.
+# Values marked PLACEHOLDER are unknown until the dataset is chosen (Task B).
+# Nothing here is a result; these are experiment settings only.
+
+project:
+  seed: 42                       # master seed used everywhere
+  repeat_seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]   # proposal Step 12: 10 seeds
+
+paths:                           # relative to the project root
+  data_raw: data/raw
+  data_processed: data/processed
+  models: models
+  results: results
+
+data:
+  dataset_name: null             # PLACEHOLDER: not chosen yet
+  raw_file: null                 # PLACEHOLDER: file inside data/raw
+  time_column: null              # PLACEHOLDER
+  rainfall_column: null          # PLACEHOLDER
+  level_column: null             # PLACEHOLDER
+  time_resolution_minutes: null  # PLACEHOLDER
+  level_unit: null               # PLACEHOLDER (e.g. m or cm)
+  rainfall_unit: null            # PLACEHOLDER (e.g. mm)
+
+task:
+  horizon_hours: 3               # N: predict exceedance within next N hours
+  horizon_options: [3, 6]        # proposal: N is 3 or 6
+  flood_threshold: null          # PLACEHOLDER: level that defines a flood event
+  window_length: null            # PLACEHOLDER: k readings for sequence models
+
+features:
+  rainfall_accum_hours: [1, 3, 6, 24]   # proposal Step 2
+  antecedent_rainfall_hours: null       # PLACEHOLDER: not defined in proposal
+
+split:                           # chronological, whole events kept together
+  train_fraction: 0.6            # working assumption, not from proposal
+  val_fraction: 0.2              # working assumption, not from proposal
+  test_fraction: 0.2             # working assumption, not from proposal
+  min_test_events: 10            # proposal: warn if fewer than 10
+
+threshold_selection:
+  cost_ratios: [10, 5, 20]       # C_FN : C_FP; first one is the default
+  min_event_recall: 0.90         # R_min from proposal Step 5
+
+quantization:
+  calibration_negatives_per_positive: 1   # RPQ example in proposal Step 7
+
+robustness:                      # proposal Step 11; test data only
+  noise_percent_of_std: [5, 10, 20]
+  missing_percent: [5, 10, 20, 40]
+  drift_percent_of_range: 10
