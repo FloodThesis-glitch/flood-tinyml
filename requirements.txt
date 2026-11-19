@@ -1,0 +1,22 @@
+﻿# Core data and science
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+
+# Deep learning and TFLite conversion
+tensorflow
+
+# Tree-model export to C for the ESP32
+emlearn
+
+# Serial link to the ESP32 (later)
+pyserial
+
+# Notebooks
+jupyter
+ipykernel
+
+# Config file reading (task A)
+pyyaml

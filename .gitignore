@@ -1,0 +1,21 @@
+# Virtual environment and Python caches
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Editor and OS files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Data: keep the folders, not the contents
+# (raw data may be large or licensed; processed data can be regenerated)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Build output
+*.egg-info/
+build/
