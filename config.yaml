@@ -1,6 +1,6 @@
 ﻿# config.yaml - single source of truth for settings.
-# Values marked PLACEHOLDER are unknown until the dataset is chosen (Task B).
-# Nothing here is a result; these are experiment settings only.
+# Values marked PLACEHOLDER are still undecided. Nothing here is a result;
+# these are experiment settings only.
 
 project:
   seed: 42                       # master seed used everywhere
@@ -13,29 +13,38 @@ paths:                           # relative to the project root
   results: results
 
 data:
-  dataset_name: null             # PLACEHOLDER: not chosen yet
-  raw_file: null                 # PLACEHOLDER: file inside data/raw
-  time_column: null              # PLACEHOLDER
-  rainfall_column: null          # PLACEHOLDER
-  level_column: null             # PLACEHOLDER
-  time_resolution_minutes: null  # PLACEHOLDER
-  level_unit: null               # PLACEHOLDER (e.g. m or cm)
-  rainfall_unit: null            # PLACEHOLDER (e.g. mm)
+  dataset_name: "FlowDB subset: 4 USGS gauges (eastern US), hourly, 2014-2018"
+  rivers: ["01398000KSMQ", "01403150KSMQ", "01584050MTN", "01586610KDMW"]
+  processed_file: flowdb/flowdb_cv_folds.csv   # inside paths.data_processed
+  time_column: time
+  river_column: river
+  rainfall_column: rain_mm
+  flow_column: cfs               # FlowDB has FLOW, not water level
+  time_resolution_minutes: 60    # checked: every gap between rows is 1 hour
+  flow_unit: cfs
+  rainfall_unit: mm
+  time_note: "Timestamps follow the local Eastern clock, not UTC (source README)."
 
 task:
   horizon_hours: 3               # N: predict exceedance within next N hours
   horizon_options: [3, 6]        # proposal: N is 3 or 6
-  flood_threshold: null          # PLACEHOLDER: level that defines a flood event
-  window_length: null            # PLACEHOLDER: k readings for sequence models
+  flood_definition:              # documents how the labels in the file were made
+    rule: "flow at or above the 99th percentile of that river's training period"
+    percentile: 99
+    merge_gap_hours: 12          # events closer than this count as one
+    note: "Labels are precomputed in the data file; editing these does not change the data."
+  window_length: null            # PLACEHOLDER: k past readings for GRU / 1D-CNN
 
 features:
-  rainfall_accum_hours: [1, 3, 6, 24]   # proposal Step 2
-  antecedent_rainfall_hours: null       # PLACEHOLDER: not defined in proposal
+  tabular_columns: [cfs_rel, dcfs_rel, rain_1h, rain_3h, rain_6h, rain_24h, rain_prev_7d]
+  rainfall_accum_hours: [1, 3, 6, 24]          # proposal Step 2
+  antecedent_rainfall_window_hours: [24, 168]  # rain_prev_7d: hours 24-168 back (source README)
 
-split:                           # chronological, whole events kept together
-  train_fraction: 0.6            # working assumption, not from proposal
-  val_fraction: 0.2              # working assumption, not from proposal
-  test_fraction: 0.2             # working assumption, not from proposal
+split:                           # chronological per river, whole events kept together
+  train_fraction: 0.6            # from source README (train 2014-2016)
+  val_fraction: 0.2              # validation 2017
+  test_fraction: 0.2             # test 2018 (NOT in the files we have yet)
+  cv_fold: 2                     # development fold: train 2014-2016, validation 2017
   min_test_events: 10            # proposal: warn if fewer than 10
 
 threshold_selection:
